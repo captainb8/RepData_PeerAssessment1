@@ -32,13 +32,10 @@ activity_data <- read.csv("activity.csv", na.strings = "NA")
 #convert date to date class
 activity_data$date <- as.Date(activity_data$date, "%Y-%m-%d")
 
-#convert interval to a factor
-activity_data$interval <- as.factor(activity_data$interval)
 ```
 
 
-## What is the average daily activity pattern?
-
+## What is mean total number of steps taken per day?
 Here we're taking a look at the distribution of total number of steps per day. Note that missing values (NA's) are being removed.
 
 ```{r, echo=TRUE}
@@ -55,7 +52,7 @@ Next, let's look at the mean & median of the total steps per day.
 #calculate the mean
 mean(total_steps, na.rm = TRUE)
 ```
-The median is 9,354.
+The mean is 9,354.
 
 ```{r, echo=TRUE}
 #calculate the median
@@ -63,7 +60,25 @@ median(total_steps, na.rm = TRUE)
 ```
 The median is 10,395.
 
-is.nan(activity_data$steps)
+
+## What is the average daily activity pattern?
+
+First, we'll take a look at the average number of steps per 5-minute interval
+
+```{r, echo=TRUE}
+# calculate the average number of steps by interval
+interval_avg_steps <- aggregate(x = list(steps = activity_data$steps), by = list(interval =  activity_data$interval), FUN = mean, na.rm = TRUE)
+
+# plot the data
+ggplot(data = interval_avg_steps, aes(x = interval, y = steps)) + geom_line() + xlab("5-minute interval") + ylab("Average Number of Steps")
+```
+
+Next, we find the interval which has the highest average of steps
+```{r, echo=TRUE}
+interval_avg_steps[which.max(interval_avg_steps$steps), ]
+```
+Interval 835 has the highest average, with 206 steps
+
 
 ## Imputing missing values
 
