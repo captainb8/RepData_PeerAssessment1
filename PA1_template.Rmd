@@ -5,6 +5,9 @@ output:
     keep_md: true
 ---
 
+```{r, echo=TRUE}
+library(ggplot2)
+```
 
 ## Loading and preprocessing the data
 
@@ -21,19 +24,46 @@ download.file(fileURL, destfile = fileName, method = "curl")
 unzip(fileName)
 ```
 
-Next, we'll read the data into R
+Next, we'll read the data into R and prep it for analysis
 ```{r, echo=TRUE}
-raw_data <- read.csv("activity.csv")
+#read the csv
+activity_data <- read.csv("activity.csv", na.strings = "NA")
+
+#convert date to date class
+activity_data$date <- as.Date(activity_data$date, "%Y-%m-%d")
+
+#convert interval to a factor
+activity_data$interval <- as.factor(activity_data$interval)
 ```
-
-
-## What is mean total number of steps taken per day?
-
 
 
 ## What is the average daily activity pattern?
 
+Here we're taking a look at the distribution of total number of steps per day. Note that missing values (NA's) are being removed.
 
+```{r, echo=TRUE}
+#use tapply to calculate the total per day
+total_steps <- tapply(activity_data$steps, activity_data$date, sum,  na.rm = TRUE)
+
+#plot histogram showing the distribution of total steps per day
+qplot(total_steps, binwidth=1000, xlab="Total Number of Steps", ylab = "Frequency", main = "Distribution of Total Steps Per Day")
+```
+
+Next, let's look at the mean & median of the total steps per day.
+
+```{r, echo=TRUE}
+#calculate the mean
+mean(total_steps, na.rm = TRUE)
+```
+The median is 9,354.
+
+```{r, echo=TRUE}
+#calculate the median
+median(total_steps, na.rm = TRUE)
+```
+The median is 10,395.
+
+is.nan(activity_data$steps)
 
 ## Imputing missing values
 
